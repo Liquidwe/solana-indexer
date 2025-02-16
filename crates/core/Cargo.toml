@@ -1,0 +1,33 @@
+[package]
+name = "carbon-core"
+version = "0.4.0"
+edition = "2018"
+description = "Core library for Carbon"
+license = "MIT"
+
+[features]
+default = ["macros"]
+macros = ["carbon-macros", "carbon-proc-macros"]
+
+[dependencies]
+solana-transaction-status = { workspace = true }
+solana-client = { workspace = true }
+solana-sdk = { workspace = true }
+
+async-trait = "0.1.82"
+futures = "0.3.30"
+log = "0.4.22"
+thiserror = "1.0.63"
+tokio = "1.40.0"
+serde = "1.0.144"
+serde_json = "1.0.85"
+bs58 = "0.5.1"
+borsh = { version = "0.10.3" }
+tokio-util = "0.7.12"
+
+# Optional macro dependencies
+carbon-proc-macros = { workspace = true, optional = true }
+carbon-macros = { workspace = true, optional = true }
+
+[lib]
+crate-type = ["rlib"]
