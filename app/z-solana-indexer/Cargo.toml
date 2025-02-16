@@ -12,6 +12,7 @@ carbon-helius-atlas-ws-datasource = { workspace = true }
 carbon-pumpfun-decoder = { workspace = true }
 carbon-raydium-amm-v4-decoder = { workspace = true }
 carbon-meteora-dlmm-decoder = { workspace = true }
+carbon-raydium-clmm-decoder = { workspace = true }
 
 helius = { version = "0.2.2" }
 tokio = { version = "1.40.0", features = ["full"] }

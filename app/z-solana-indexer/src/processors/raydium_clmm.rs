@@ -1,50 +1,10 @@
+use std::sync::Arc;
 use async_trait::async_trait;
-use carbon_core::{
-    error::CarbonResult,
-    instruction::{DecodedInstruction, InstructionMetadata, NestedInstruction},
-    metrics::MetricsCollection,
-    processor::Processor,
-};
-use carbon_log_metrics::LogMetrics;
-use carbon_raydium_clmm_decoder::{instructions::RaydiumClmmInstruction, RaydiumClmmDecoder};
-use carbon_rpc_block_subscribe_datasource::{Filters, RpcBlockSubscribe};
-use solana_client::rpc_config::{RpcBlockSubscribeConfig, RpcBlockSubscribeFilter};
-use solana_sdk::{pubkey, pubkey::Pubkey};
-use std::{env, sync::Arc};
-
-pub const RAYDIUM_CLMM_PROGRAM_ID: Pubkey = pubkey!("CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK");
-
-#[tokio::main]
-pub async fn main() -> CarbonResult<()> {
-    env_logger::init();
-    dotenv::dotenv().ok();
-
-    let filters = Filters::new(
-        RpcBlockSubscribeFilter::MentionsAccountOrProgram(RAYDIUM_CLMM_PROGRAM_ID.to_string()),
-        Some(RpcBlockSubscribeConfig {
-            max_supported_transaction_version: Some(0),
-            ..RpcBlockSubscribeConfig::default()
-        }),
-    );
-
-    let rpc_ws_url =
-        env::var("RPC_WS_URL").unwrap_or("wss://api.mainnet-beta.solana.com/".to_string());
-
-    log::info!("Starting with RPC: {}", rpc_ws_url);
-    let block_subscribe = RpcBlockSubscribe::new(rpc_ws_url, filters);
-
-    carbon_core::pipeline::Pipeline::builder()
-        .datasource(block_subscribe)
-        .metrics(Arc::new(LogMetrics::new()))
-        .metrics_flush_interval(3)
-        .instruction(RaydiumClmmDecoder, RaydiumClmmInstructionProcessor)
-        .shutdown_strategy(carbon_core::pipeline::ShutdownStrategy::Immediate)
-        .build()?
-        .run()
-        .await?;
-
-    Ok(())
-}
+use carbon_core::error::CarbonResult;
+use carbon_core::instruction::{DecodedInstruction, InstructionMetadata, NestedInstruction};
+use carbon_core::metrics::MetricsCollection;
+use carbon_core::processor::Processor;
+use carbon_raydium_clmm_decoder::instructions::RaydiumClmmInstruction;
 
 pub struct RaydiumClmmInstructionProcessor;
 
@@ -166,7 +126,7 @@ impl Processor for RaydiumClmmInstructionProcessor {
                 log::info!("Swap: signature: {signature}, swap: {swap:?}");
             }
             RaydiumClmmInstruction::SwapV2(swap_v2) => {
-                log::info!("SwapV2: signature: {signature}, swap_v2: {swap_v2:?}");
+                println!("SwapV2: signature: {signature}, swap_v2: {swap_v2:?}");
             }
             RaydiumClmmInstruction::SwapRouterBaseIn(swap_base_in) => {
                 log::info!(
@@ -201,10 +161,10 @@ impl Processor for RaydiumClmmInstructionProcessor {
                 log::info!("CollectProtocolFeeEvent: signature: {signature}, collect_protocol_fee_event: {collect_protocol_fee_event:?}");
             }
             RaydiumClmmInstruction::SwapEvent(swap_event) => {
-                log::info!("SwapEvent: signature: {signature}, swap_event: {swap_event:?}");
+                println!("SwapEvent: signature: {signature}, swap_event: {swap_event:?}");
             }
             RaydiumClmmInstruction::LiquidityChangeEvent(liq_change_event) => {
-                log::info!("LiquidityChangeEvent: signature: {signature}, liq_change_event: {liq_change_event:?}");
+                println!("LiquidityChangeEvent: signature: {signature}, liq_change_event: {liq_change_event:?}");
             }
         };
 

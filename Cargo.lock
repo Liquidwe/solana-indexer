@@ -1209,7 +1209,7 @@ dependencies = [
  "tokio",
  "tokio-util",
  "yellowstone-grpc-client",
- "yellowstone-grpc-proto 2.0.0 (git+https://github.com/rpcpool/yellowstone-grpc.git?rev=17faff5ac068c2f212c471acf67a8dcc1d7caff5)",
+ "yellowstone-grpc-proto",
 ]
 
 [[package]]
@@ -2696,24 +2696,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "kamino-alerts-carbon-example"
-version = "0.2.1"
-dependencies = [
- "async-trait",
- "carbon-core",
- "carbon-kamino-lending-decoder",
- "carbon-yellowstone-grpc-datasource",
- "dotenv",
- "env_logger 0.11.5",
- "log",
- "solana-client",
- "solana-sdk",
- "solana-transaction-status",
- "tokio",
- "yellowstone-grpc-proto 2.0.0 (git+https://github.com/rpcpool/yellowstone-grpc.git?rev=17faff5ac068c2f212c471acf67a8dcc1d7caff5)",
-]
-
-[[package]]
 name = "keccak"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2866,26 +2848,6 @@ dependencies = [
  "keccak",
  "rand_core 0.6.4",
  "zeroize",
-]
-
-[[package]]
-name = "meteora-activities-carbon-example"
-version = "0.2.1"
-dependencies = [
- "async-trait",
- "carbon-core",
- "carbon-log-metrics",
- "carbon-meteora-dlmm-decoder",
- "carbon-pumpfun-decoder",
- "carbon-rpc-transaction-crawler-datasource",
- "dotenv",
- "env_logger 0.11.5",
- "log",
- "solana-client",
- "solana-sdk",
- "solana-transaction-status",
- "tokio",
- "yellowstone-grpc-proto 2.0.0 (git+https://github.com/rpcpool/yellowstone-grpc.git)",
 ]
 
 [[package]]
@@ -3759,42 +3721,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "raydium-alerts-carbon-example"
-version = "0.2.1"
-dependencies = [
- "async-trait",
- "carbon-core",
- "carbon-raydium-amm-v4-decoder",
- "carbon-yellowstone-grpc-datasource",
- "dotenv",
- "env_logger 0.11.5",
- "log",
- "solana-client",
- "solana-sdk",
- "solana-transaction-status",
- "tokio",
- "yellowstone-grpc-proto 2.0.0 (git+https://github.com/rpcpool/yellowstone-grpc.git?rev=17faff5ac068c2f212c471acf67a8dcc1d7caff5)",
-]
-
-[[package]]
-name = "raydium-clmm-alerts-carbon-example"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "carbon-core",
- "carbon-log-metrics",
- "carbon-raydium-clmm-decoder",
- "carbon-rpc-block-subscribe-datasource",
- "dotenv",
- "env_logger 0.11.5",
- "log",
- "solana-client",
- "solana-sdk",
- "solana-transaction-status",
- "tokio",
-]
-
-[[package]]
 name = "rayon"
 version = "1.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4411,26 +4337,6 @@ checksum = "75872d278a8f37ef87fa0ddbda7802605cb18344497949862c0d4dcb291eba60"
 dependencies = [
  "digest 0.10.7",
  "keccak",
-]
-
-[[package]]
-name = "sharky-offers-carbon-example"
-version = "0.2.1"
-dependencies = [
- "anyhow",
- "async-trait",
- "carbon-core",
- "carbon-log-metrics",
- "carbon-rpc-program-subscribe-datasource",
- "carbon-sharky-decoder",
- "dotenv",
- "env_logger 0.11.5",
- "serde",
- "solana-account-decoder",
- "solana-client",
- "solana-sdk",
- "tokio",
- "tokio-util",
 ]
 
 [[package]]
@@ -6600,29 +6506,13 @@ dependencies = [
  "thiserror",
  "tonic",
  "tonic-health",
- "yellowstone-grpc-proto 2.0.0 (git+https://github.com/rpcpool/yellowstone-grpc.git?rev=17faff5ac068c2f212c471acf67a8dcc1d7caff5)",
+ "yellowstone-grpc-proto",
 ]
 
 [[package]]
 name = "yellowstone-grpc-proto"
 version = "2.0.0"
 source = "git+https://github.com/rpcpool/yellowstone-grpc.git?rev=17faff5ac068c2f212c471acf67a8dcc1d7caff5#17faff5ac068c2f212c471acf67a8dcc1d7caff5"
-dependencies = [
- "anyhow",
- "bincode",
- "prost",
- "protobuf-src",
- "solana-account-decoder",
- "solana-sdk",
- "solana-transaction-status",
- "tonic",
- "tonic-build",
-]
-
-[[package]]
-name = "yellowstone-grpc-proto"
-version = "2.0.0"
-source = "git+https://github.com/rpcpool/yellowstone-grpc.git#17faff5ac068c2f212c471acf67a8dcc1d7caff5"
 dependencies = [
  "anyhow",
  "bincode",
@@ -6645,6 +6535,7 @@ dependencies = [
  "carbon-meteora-dlmm-decoder",
  "carbon-pumpfun-decoder",
  "carbon-raydium-amm-v4-decoder",
+ "carbon-raydium-clmm-decoder",
  "dotenv",
  "env_logger 0.11.5",
  "helius",
