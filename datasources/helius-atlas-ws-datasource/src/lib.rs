@@ -215,6 +215,8 @@ impl Datasource for HeliusWebsocket {
                                             if let Ok(clock) = bincode::deserialize::<Clock>(&clock_data.data) {
                                                 let current_slot = clock.slot;
 
+                                                log::info!("Processing slot: {}", current_slot);
+
                                                 if last_slot > 0 && current_slot > last_slot + MAX_MISSED_BLOCKS {
                                                     log::warn!(
                                                         "Detected large slot gap: last_slot={}, current_slot={}, gap={}",
@@ -232,6 +234,8 @@ impl Datasource for HeliusWebsocket {
                                                     )
                                                     .await
                                                     .unwrap_or_else(|value| log::error!("Error recording metric: {}", value));
+                                                
+                                                log::info!("Completed processing slot: {}", current_slot);
                                             }
                                         }
                                     }

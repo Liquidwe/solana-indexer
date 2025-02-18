@@ -29,8 +29,6 @@ impl Processor for MeteoraInstructionProcessor {
             MeteoraDlmmInstruction::AddLiquidity(_add_liquidity) => {}
             MeteoraDlmmInstruction::RemoveLiquidity(_remove_liquidity) => {}
             MeteoraDlmmInstruction::SwapEvent(_swap) => {
-                println!("\nSignature: {:#?}", _instruction_metadata.transaction_metadata.signature);
-                println!("\nMeteora Swap: {:#?}", _swap);
             }
             MeteoraDlmmInstruction::ClaimReward(_claim_reward) => {}
             MeteoraDlmmInstruction::FundReward(_fund_reward) => {}

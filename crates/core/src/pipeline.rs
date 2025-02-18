@@ -54,6 +54,7 @@ use crate::{
     schema::TransactionSchema,
     transaction::{TransactionPipe, TransactionPipes, TransactionProcessorInputType},
     transformers,
+    sink::Sink,
 };
 use core::time;
 use serde::de::DeserializeOwned;
@@ -131,6 +132,7 @@ pub enum ShutdownStrategy {
 ///   Each metrics instance is managed within an `Arc` to ensure thread safety.
 /// - `metrics_flush_interval`: An optional interval, in seconds, defining how frequently
 ///   metrics should be flushed. If `None`, the default interval is used.
+/// - `sinks`: A vector of `Sink` implementations for handling data output.
 ///
 /// ## Example
 ///
@@ -172,6 +174,7 @@ pub struct Pipeline {
     pub metrics: Arc<MetricsCollection>,
     pub metrics_flush_interval: Option<u64>,
     pub shutdown_strategy: ShutdownStrategy,
+    pub sinks: Vec<Arc<dyn Sink>>,
 }
 
 impl Pipeline {
@@ -212,12 +215,13 @@ impl Pipeline {
             metrics: MetricsCollection::default(),
             metrics_flush_interval: None,
             shutdown_strategy: ShutdownStrategy::default(),
+            sinks: Vec::new(),
         }
     }
 
     /// Runs the `Pipeline`, processing updates from data sources and handling metrics.
     ///
-    /// The `run` method initializes the pipeline’s metrics system and starts listening for
+    /// The `run` method initializes the pipeline's metrics system and starts listening for
     /// updates from the configured data sources. It checks the types of updates provided
     /// by each data source to ensure that the required data types are available for
     /// processing. The method then enters a loop where it processes each update received
@@ -408,6 +412,11 @@ impl Pipeline {
 
         log::info!("pipeline shutdown complete.");
 
+        // After processing through pipes, flush sinks
+        for sink in &self.sinks {
+            sink.flush().await?;
+        }
+
         Ok(())
     }
 
@@ -518,6 +527,11 @@ impl Pipeline {
             }
         };
 
+        // After processing through pipes, flush sinks
+        for sink in &self.sinks {
+            sink.flush().await?;
+        }
+
         Ok(())
     }
 }
@@ -567,6 +581,7 @@ impl Pipeline {
 /// - `metrics`: A vector of `Metrics` implementations for tracking pipeline performance.
 /// - `metrics_flush_interval`: An optional interval (in seconds) for flushing metrics data.
 ///   If not set, a default flush interval will be used.
+/// - `sinks`: A collection of `Sink` implementations for handling data output.
 ///
 /// # Returns
 ///
@@ -589,6 +604,7 @@ pub struct PipelineBuilder {
     pub metrics: MetricsCollection,
     pub metrics_flush_interval: Option<u64>,
     pub shutdown_strategy: ShutdownStrategy,
+    pub sinks: Vec<Arc<dyn Sink>>,
 }
 
 impl PipelineBuilder {
@@ -616,6 +632,7 @@ impl PipelineBuilder {
             shutdown_strategy: ShutdownStrategy::default(),
             metrics: MetricsCollection::default(),
             metrics_flush_interval: None,
+            sinks: Vec::new(),
         }
     }
 
@@ -854,6 +871,24 @@ impl PipelineBuilder {
         self
     }
 
+    /// Adds a sink to the pipeline for data output.
+    ///
+    /// # Parameters
+    ///
+    /// - `sink`: An implementation of the `Sink` trait for handling data output.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// let builder = PipelineBuilder::new()
+    ///     .sink(Arc::new(ClickhouseSink::new()));
+    /// ```
+    pub fn sink(mut self, sink: Arc<dyn Sink>) -> Self {
+        log::trace!("sink(self, sink: {:?})", stringify!(sink));
+        self.sinks.push(sink);
+        self
+    }
+
     /// Builds and returns a `Pipeline` configured with the specified components.
     ///
     /// After configuring the `PipelineBuilder` with data sources, pipes, and metrics,
@@ -895,6 +930,7 @@ impl PipelineBuilder {
             shutdown_strategy: self.shutdown_strategy,
             metrics: Arc::new(self.metrics),
             metrics_flush_interval: self.metrics_flush_interval,
+            sinks: self.sinks,
         })
     }
 }

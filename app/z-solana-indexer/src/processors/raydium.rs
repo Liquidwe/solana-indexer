@@ -28,10 +28,6 @@ impl Processor for RaydiumAmmV4InstructionProcessor {
 
         match instruction.data {
             RaydiumAmmV4Instruction::Initialize2(init_pool) => {
-                println!(
-                    "\nsignature: {:#?}\nInitialize: {:#?}\nAccounts: {:#?}",
-                    signature, init_pool, accounts
-                );
             }
             RaydiumAmmV4Instruction::SwapBaseIn(swap) => {
                 println!(
@@ -40,10 +36,6 @@ impl Processor for RaydiumAmmV4InstructionProcessor {
                 );
             }
             RaydiumAmmV4Instruction::SwapBaseOut(swap) => {
-                println!(
-                    "\nsignature: {:#?}\nSwap: {:#?}",
-                    signature, swap
-                );
             }
             _ => {}
         };

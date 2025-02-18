@@ -23,13 +23,13 @@ impl Processor for PumpfunInstructionProcessor {
 
         match pumpfun_instruction {
             PumpfunInstruction::CreateEvent(create_event) => {
-                println!("\nNew token created: {:#?}", create_event);
+                // println!("\nNew token created: {:#?}", create_event);
             }
             PumpfunInstruction::TradeEvent(trade_event) => {
-                println!("\nBig trade occured: {:#?}", trade_event);
+                // println!("\nBig trade occured: {:#?}", trade_event);
             }
             PumpfunInstruction::CompleteEvent(complete_event) => {
-                println!("\nBonded: {:#?}", complete_event);
+                // println!("\nBonded: {:#?}", complete_event);
             }
             _ => {}
         };

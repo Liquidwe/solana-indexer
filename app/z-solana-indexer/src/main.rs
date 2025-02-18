@@ -1,5 +1,6 @@
 mod processors;
 mod constants;
+mod sinks;
 
 use processors::{
     RaydiumAmmV4InstructionProcessor,
@@ -19,6 +20,7 @@ use helius::types::{
 };
 use std::{collections::HashSet, sync::Arc};
 use tokio::sync::RwLock;
+use sinks::clickhouse::ClickhouseSink;
 
 #[tokio::main]
 pub async fn main() -> CarbonResult<()> {
@@ -60,8 +62,9 @@ pub async fn main() -> CarbonResult<()> {
         .datasource(helius_websocket)
         .instruction(PumpfunDecoder, PumpfunInstructionProcessor)
         .instruction(RaydiumAmmV4Decoder, RaydiumAmmV4InstructionProcessor)
-        .instruction(MeteoraDlmmDecoder, MeteoraInstructionProcessor)
-        .instruction(RaydiumClmmDecoder, RaydiumClmmInstructionProcessor)
+        // .instruction(RaydiumClmmDecoder, RaydiumClmmInstructionProcessor)
+        // .instruction(MeteoraDlmmDecoder, MeteoraInstructionProcessor)
+        .sink(Arc::new(ClickhouseSink::new(std::env::var("CLICKHOUSE_URL").unwrap())))
         .build()?
         .run()
         .await?;

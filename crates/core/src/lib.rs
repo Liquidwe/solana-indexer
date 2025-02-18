@@ -110,6 +110,7 @@ pub mod schema;
 pub mod transaction;
 pub mod transformers;
 pub use borsh;
+pub mod sink;
 
 #[cfg(feature = "macros")]
 pub use carbon_macros::*;
