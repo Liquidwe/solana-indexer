@@ -63,7 +63,7 @@ pub async fn main() -> CarbonResult<()> {
         .instruction(PumpfunDecoder, PumpfunInstructionProcessor)
         .instruction(RaydiumAmmV4Decoder, RaydiumAmmV4InstructionProcessor)
         // .instruction(RaydiumClmmDecoder, RaydiumClmmInstructionProcessor)
-        // .instruction(MeteoraDlmmDecoder, MeteoraInstructionProcessor)
+        .instruction(MeteoraDlmmDecoder, MeteoraInstructionProcessor)
         .sink(Arc::new(ClickhouseSink::new(std::env::var("CLICKHOUSE_URL").unwrap())))
         .build()?
         .run()
