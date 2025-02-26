@@ -1,6 +1,7 @@
 mod processors;
 mod constants;
 mod sinks;
+mod events;
 
 use processors::{
     RaydiumAmmV4InstructionProcessor,
@@ -20,7 +21,7 @@ use helius::types::{
 };
 use std::{collections::HashSet, sync::Arc};
 use tokio::sync::RwLock;
-use sinks::clickhouse::ClickhouseSink;
+use sinks::{kafka::KafkaSink};
 
 #[tokio::main]
 pub async fn main() -> CarbonResult<()> {
@@ -58,13 +59,20 @@ pub async fn main() -> CarbonResult<()> {
         Cluster::MainnetBeta,
     );
 
+    let kafka_sink = Arc::new(KafkaSink::new(
+        &std::env::var("KAFKA_BROKERS").unwrap(),
+        &std::env::var("KAFKA_TOPIC").unwrap(),
+    ));
+
     carbon_core::pipeline::Pipeline::builder()
         .datasource(helius_websocket)
-        .instruction(PumpfunDecoder, PumpfunInstructionProcessor)
-        .instruction(RaydiumAmmV4Decoder, RaydiumAmmV4InstructionProcessor)
+        .instruction(
+            PumpfunDecoder,
+            PumpfunInstructionProcessor::new(kafka_sink.clone())
+        )
+        // .instruction(RaydiumAmmV4Decoder, RaydiumAmmV4InstructionProcessor)
         // .instruction(RaydiumClmmDecoder, RaydiumClmmInstructionProcessor)
-        .instruction(MeteoraDlmmDecoder, MeteoraInstructionProcessor)
-        .sink(Arc::new(ClickhouseSink::new(std::env::var("CLICKHOUSE_URL").unwrap())))
+        // .instruction(MeteoraDlmmDecoder, MeteoraInstructionProcessor)
         .build()?
         .run()
         .await?;

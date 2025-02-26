@@ -22,29 +22,3 @@ impl ClickhouseSink {
         self.processed_count.load(std::sync::atomic::Ordering::Relaxed)
     }
 }
-
-#[async_trait]
-impl Sink for ClickhouseSink {
-    async fn initialize(&self) -> CarbonResult<()> {
-        Ok(())
-    }
-
-    async fn flush(&self) -> CarbonResult<()> {
-        self.processed_count.store(self.get_processed_count()+1, std::sync::atomic::Ordering::Relaxed);
-        println!("flushing clickhouse sink, processed {} records", self.get_processed_count());
-        Ok(())
-    }
-
-    async fn shutdown(&self) -> CarbonResult<()> {
-        Ok(())
-    }
-
-    // async fn process(&self, data: Vec<Row>) -> CarbonResult<()> {
-    //     self.client
-    //         .insert("")
-    //         .data(data)
-    //         .await?;
-        
-    //     Ok(())
-    // }
-}
