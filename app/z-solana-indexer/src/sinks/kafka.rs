@@ -4,7 +4,7 @@ use serde_json::to_string;
 use std::time::Duration;
 
 use carbon_core::error::CarbonResult;
-use crate::events::DexEvent;
+use crate::events::SolanaEvent;
 
 pub struct KafkaSink {
     producer: FutureProducer,
@@ -25,15 +25,22 @@ impl KafkaSink {
         }
     }
 
-    pub async fn send_event(&self, event: DexEvent) -> CarbonResult<()> {
-        let payload = to_string(&event).unwrap();
+    pub async fn send_event(&self, event: SolanaEvent) -> CarbonResult<()> {
+        let (payload, key) = match event {
+            SolanaEvent::Trade(trade_event) => {
+                (to_string(&trade_event).unwrap(), trade_event.tx_hash.clone())
+            },
+            SolanaEvent::CreatePool(create_event) => {
+                (to_string(&create_event).unwrap(), create_event.signature.clone())
+            },
+        };
         
         self.producer
             .send(
                 FutureRecord::to(&self.topic)
                     .payload(&payload)
-                    .key("aaa"),
-                Duration::from_secs(5),
+                    .key(&key),
+                Duration::from_secs(2),
             )
             .await
             .map_err(|e| carbon_core::error::Error::Custom(e.0.to_string()))?;
